@@ -1,4 +1,5 @@
 #include<opencv2/opencv.hpp>
+
 #ifdef _DEBUG
 #define EXT_STR "d.lib"
 #else
