@@ -11,6 +11,7 @@ namespace RayTracingCPU
 		Camera   camera;
 		cv::Mat   image;   // 64bit,3ch�̉摜
 		ShapeList world;
+		cv::RNG		rng;
 		static const int num_supersample = 5;
 
 	public:
@@ -19,9 +20,9 @@ namespace RayTracingCPU
 
 		void build();
 		void render();
-		cv::Vec3d ambient(const Ray& r, const cv::Vec3d& skydir) const;
-		cv::Vec3d getColor(const Ray& r) const;
-		cv::Vec3d getLambartColor(const Ray& r) const;
+		cv::Vec3d ambient(const Ray& r, const cv::Vec3d& skydir) ;
+		cv::Vec3d getColor(const Ray& r) ;
+		cv::Vec3d getLambartColor(const Ray& r) ;
 	};
 
 }

@@ -6,6 +6,10 @@ using namespace RayTracingCPU;
 
 void RayTracingCPU::Scene::build()
 {
+	// 乱数生成器の初期化
+	rng = cv::theRNG();
+	rng.state = std::random_device{}();
+
 	// Cameraの生成
 	auto cam_origin = cv::Vec3d(0, 0, 0);
 	auto lookat = cv::Vec3d(0, 0, -1);
@@ -36,8 +40,8 @@ void RayTracingCPU::Scene::render()
 			cv::Vec3d c(0.0);
 			for (int i = 0; i < num_supersample; ++i) {
 				cv::Vec2d uv = {
-					double(p[1] + cv::theRNG().uniform(0.,1.)) / double(image.cols),
-					double(p[0] + cv::theRNG().uniform(0.,1.)) / double(image.rows)
+					double(p[1] + rng.uniform(0.,1.)) / double(image.cols),
+					double(p[0] + rng.uniform(0.,1.)) / double(image.rows)
 				};
 				auto ray = camera.getRay(uv);
 				c += getLambartColor(ray);
@@ -58,7 +62,7 @@ void RayTracingCPU::Scene::render()
 
 }
 
-cv::Vec3d RayTracingCPU::Scene::ambient(const Ray& r, const cv::Vec3d& skydir) const
+cv::Vec3d RayTracingCPU::Scene::ambient(const Ray& r, const cv::Vec3d& skydir) 
 {
 	cv::Vec3d skycolor(1.0, 0.7, 0.5);
 	cv::Vec3d basecolor(1.0, 1.0, 1.0);
@@ -69,7 +73,7 @@ cv::Vec3d RayTracingCPU::Scene::ambient(const Ray& r, const cv::Vec3d& skydir) c
 	return color;
 }
 
-cv::Vec3d RayTracingCPU::Scene::getColor(const Ray& r) const
+cv::Vec3d RayTracingCPU::Scene::getColor(const Ray& r) 
 {
 	RayHitInfo hinfo;
 	if (world.hit(r, 0, 1000.0, hinfo)) {
@@ -84,7 +88,7 @@ cv::Vec3d RayTracingCPU::Scene::getColor(const Ray& r) const
 // このとき確率分布は法線ベクトルの足に接する実球と一致するので，
 // 法線ベクトルの先から半径1の球内の点をランダムサンプルし法線ベクトルに加えることで
 // ランバート反射に従うランダム反射を実現できる．
-cv::Vec3d RayTracingCPU::Scene::getLambartColor(const Ray& r) const
+cv::Vec3d RayTracingCPU::Scene::getLambartColor(const Ray& r) 
 {
 	RayHitInfo hinfo;
 
@@ -92,7 +96,11 @@ cv::Vec3d RayTracingCPU::Scene::getLambartColor(const Ray& r) const
 		// 半径1，中心(0,0,0)の点をランダムサンプル
 		cv::Vec3d randvec;
 		do {
-			cv::randu(randvec, -1.0, 1.0);
+			randvec = {
+				rng.uniform(-1.,1.),
+				rng.uniform(-1.,1.),
+				rng.uniform(-1.,1.)
+			};
 		} while (randvec.dot(randvec) > 1.0);
 		// ランバート則でランダム反射したRayを生成して次の方向の色を得る
 		return 0.5 * getLambartColor(Ray(hinfo.pos, hinfo.norm + randvec));
