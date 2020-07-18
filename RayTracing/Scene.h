@@ -1,5 +1,6 @@
 #pragma once
 #include "RayTracingCPU.h"
+#include <random>
 
 namespace RayTracingCPU
 {
@@ -8,17 +9,19 @@ namespace RayTracingCPU
 	{
 	private:
 		Camera   camera;
-		cv::Mat   image;
+		cv::Mat   image;   // 64bit,3ch�̉摜
 		ShapeList world;
+		static const int num_supersample = 5;
 
 	public:
 		Scene(int width, int height) 
-			: image(cv::Mat(cv::Size(width, height), CV_8UC3, cv::Scalar::all(0.2))) {};
+			: image(cv::Mat(cv::Size(width, height), CV_64FC3, cv::Scalar::all(0.2))) {};
 
 		void build();
 		void render();
-		cv::Scalar ambient(const Ray& r, const cv::Vec3d& viewup) const;
-		cv::Scalar getColor(const Ray& r) const;
+		cv::Vec3d ambient(const Ray& r, const cv::Vec3d& skydir) const;
+		cv::Vec3d getColor(const Ray& r) const;
+		cv::Vec3d getLambartColor(const Ray& r) const;
 	};
 
 }

@@ -29,8 +29,7 @@ namespace RayTracingCPU
         
         // ShapeList‚ª•Û‚·‚é•¨‘ÌŒQ‚Æ‚ÌÕ“Ë”»’è
         // Å‚àRayŒ´“_‚É‹ß‚¢•\–Ê‚Å‚ÌÕ“Ëî•ñ‚ğ•Ô‚·
-        virtual bool hit(const Ray& r, double t0, double t1, RayHitInfo& hinfo)
-            const override {
+        virtual bool hit(const Ray& r, double t0, double t1, RayHitInfo& hinfo) const override {
             RayHitInfo info_temp;
             bool hit_anything = false;
             double t_closest = t1;
