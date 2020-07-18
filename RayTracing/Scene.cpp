@@ -2,6 +2,8 @@
 
 using namespace RayTracingCPU;
 
+#define NOT_PARALLEL false
+
 void RayTracingCPU::Scene::build()
 {
 	// Cameraの生成
@@ -21,11 +23,16 @@ void RayTracingCPU::Scene::build()
 void RayTracingCPU::Scene::render()
 {
 	// 描画（CPU並列処理．フラグメントシェーダに相当）
+
+#if NOT_PARALLEL
+	// 並列化しない場合
+	for (int h = 0; h < image.rows; ++h) {
+		for (int w = 0; w < image.cols; ++w) {
+			int p[2] = { h,w };
+			auto& v = image.at<cv::Vec3d>(h, w);
+#else
 	image.forEach<cv::Vec3d>([&](cv::Vec3d& v, const int* p) {
-	//for (int h = 0; h < image.rows; ++h) {
-	//	for (int w = 0; w < image.cols; ++w) {
-	//		int p[2] = { h,w };
-	//		auto& v = image.at<cv::Vec3d>(h, w);
+#endif
 			cv::Vec3d c(0.0);
 			for (int i = 0; i < num_supersample; ++i) {
 				cv::Vec2d uv = {
@@ -37,9 +44,12 @@ void RayTracingCPU::Scene::render()
 			}
 			c = c / double(num_supersample);
 			v = c;
-	//	}
-	//}
+#if NOT_PARALLEL
+		}
+	}
+#else
 			});
+#endif
 	// 画像の表示
 	cv::Mat img_8u;
 	image.convertTo(img_8u, CV_8UC3, 255.0, 0);
