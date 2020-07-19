@@ -55,11 +55,16 @@ void RayTracingCPU::Scene::render()
 			});
 #endif
 	// ‰æ‘œ‚Ì•\Ž¦
-	cv::Mat img_8u;
-	image.convertTo(img_8u, CV_8UC3, 255.0, 0);
+	cv::Mat img_8u = developPhoto(image);
 	cv::imshow("test", img_8u);
 	cv::waitKey();
+}
 
+cv::Mat RayTracingCPU::Scene::developPhoto(cv::Mat& raw)
+{
+	cv::Mat img_8u;
+	image.convertTo(img_8u, CV_8UC3, 255.0, 0);
+	return img_8u;
 }
 
 cv::Vec3d RayTracingCPU::Scene::ambient(const Ray& r, const cv::Vec3d& skydir) 

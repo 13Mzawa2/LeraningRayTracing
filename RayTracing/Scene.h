@@ -8,10 +8,11 @@ namespace RayTracingCPU
 	class Scene
 	{
 	private:
-		Camera   camera;
-		cv::Mat   image;   // 64bit,3ch�̉摜
-		ShapeList world;
+		Camera		camera;
+		cv::Mat		image;   // 64bit,3ch�̉摜
+		ShapeList	world;
 		cv::RNG		rng;
+		cv::Mat		gamma_lut;
 		static const int num_supersample = 5;
 
 	public:
@@ -20,6 +21,7 @@ namespace RayTracingCPU
 
 		void build();
 		void render();
+		cv::Mat developPhoto(cv::Mat& raw);
 		cv::Vec3d ambient(const Ray& r, const cv::Vec3d& skydir) ;
 		cv::Vec3d getColor(const Ray& r) ;
 		cv::Vec3d getLambartColor(const Ray& r) ;
